@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Gestión de Usuarios</h2>
+<a href="{{ url_for('crear_usuario') }}" class="btn btn-primary mb-3">Crear nuevo usuario</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in usuarios %}
+        <tr>
+            <td>{{ usuario.nombre }}</td>
+            <td>
+                {% if usuario.nombre != 'admin' %}
+                    <a href="{{ url_for('editar_usuario', id=usuario.id) }}" class="btn btn-sm btn-warning">Editar</a>
+                    <form method="post" action="{{ url_for('eliminar_usuario', id=usuario.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                    </form>
+                {% else %}
+                    <span class="text-muted">Administrador</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

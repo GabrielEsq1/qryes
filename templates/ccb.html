@@ -1,0 +1,62 @@
+<script>
+  // ... (deja lo demás igual: variables, modal, ZXing, etc.)
+
+  function renderResultados(items){
+    const tbody = document.getElementById('tbodyResultados');
+    const alerta = document.getElementById('alerta');
+    tbody.innerHTML = '';
+    if (!items || items.length === 0){
+      alerta.textContent = 'No se encontraron resultados para su búsqueda.';
+      alerta.classList.remove('d-none');
+      return;
+    }
+    alerta.classList.add('d-none');
+
+    for (const r of items){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.OP || ''}</td>
+        <td>${r.CLIENTE || ''}</td>
+        <td>${r.NOMBRE || ''}</td>
+        <td>${r["DESCRIPCIÓN"] || ''}</td>
+        <td>${r.CANTIDAD || ''}</td>
+        <td>${r.TALLA || ''}</td>
+        <td>${r.QR ? `<a href="${r.QR}" target="_blank" rel="noopener">Abrir</a>` : ''}</td>
+        <td>${r.ENLACE ? `<a href="${r.ENLACE}" target="_blank" rel="noopener">Ver</a>` : ''}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  async function buscarOP(){
+    const term = (opInput.value || '').trim();
+    const alerta = document.getElementById('alerta');
+    const tbody = document.getElementById('tbodyResultados');
+    tbody.innerHTML = '';
+    if (!term){
+      alerta.textContent = 'Ingresa una OP para buscar.';
+      alerta.classList.remove('d-none');
+      return;
+    }
+    alerta.textContent = 'Buscando…';
+    alerta.classList.remove('d-none');
+
+    try{
+      const r = await fetch('/buscar?op=' + encodeURIComponent(term));
+      const data = await r.json();
+      if (data.ok){
+        renderResultados(data.results);
+      }else{
+        alerta.textContent = 'Error en la búsqueda.';
+      }
+    }catch(e){
+      alerta.textContent = 'Error de red: ' + e;
+    }
+  }
+
+  btnBuscar.addEventListener('click', buscarOP);
+
+  // Si quieres que al leer un QR no-URL se busque automáticamente:
+  // dentro de tu lógica de QR, después de: opInput.value = payload;
+  // llama: buscarOP();
+</script>

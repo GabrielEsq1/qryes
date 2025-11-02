@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error</title>
+</head>
+<body>
+    <h1>Error</h1>
+    <p>{{ mensaje }}</p>
+    {% if ruta_archivo %}
+    <p><b>Ruta esperada:</b> {{ ruta_archivo }}</p>
+    {% endif %}
+    <a href="{{ url_for('login') }}">Volver al inicio</a>
+</body>
+</html>
